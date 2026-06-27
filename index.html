@@ -106,7 +106,10 @@
   .field{margin-bottom:18px;}
   .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
   .field .val{font-weight:700;color:var(--ink);}
-  input[type=range]{width:100%;}
+  input[type=range]{width:100%;accent-color:var(--ink);-webkit-appearance:none;appearance:none;height:4px;background:var(--line-strong);border-radius:2px;outline:none;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;border-radius:50%;background:var(--ink);cursor:pointer;border:none;}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);cursor:pointer;border:none;}
+  input[type=range]::-moz-range-track{background:var(--line-strong);height:4px;border-radius:2px;}
   select{width:100%;font-size:13px;padding:8px;border:1px solid var(--line-strong);border-radius:6px;background:var(--paper);}
   .results3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px;}
   .result{background:var(--paper);border-radius:8px;padding:16px;text-align:center;}
@@ -476,6 +479,10 @@
 
   var miles=document.getElementById('miles'), spend=document.getElementById('spend'), crews=document.getElementById('crews'), zone=document.getElementById('zone');
   function fmt(n){return Math.round(n).toLocaleString();}
+  function fillSlider(el){
+    var pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.background = 'linear-gradient(to right, var(--ink) 0%, var(--ink) '+pct+'%, var(--line-strong) '+pct+'%, var(--line-strong) 100%)';
+  }
   function calc(){
     document.getElementById('miles-out').textContent = fmt(miles.value);
     document.getElementById('spend-out').textContent = spend.value;
@@ -487,6 +494,7 @@
     document.getElementById('out-saidi').textContent = fmt(saidi);
     document.getElementById('out-risk').textContent = Math.round(risk) + '%';
     document.getElementById('out-hours').textContent = fmt(hours);
+    [miles,spend,crews].forEach(fillSlider);
   }
   [miles,spend,crews,zone].forEach(function(el){ el.addEventListener('input', calc); });
   calc();
