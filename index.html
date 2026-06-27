@@ -154,6 +154,64 @@
 
   .page{display:none;}
   .page.active{display:block;}
+
+  .nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:30px;height:30px;background:none;border:none;cursor:pointer;padding:0;}
+  .nav-toggle span{display:block;width:22px;height:2px;background:var(--ink);}
+
+  @media (max-width: 900px){
+    .wrap{padding:0 20px;}
+
+    nav.primary{display:none;}
+    nav.primary.mobile-open{display:flex;flex-direction:column;align-items:flex-start;gap:0;position:absolute;left:0;right:0;top:100%;background:var(--paper);border-bottom:1px solid var(--line);padding:8px 20px 16px;box-shadow:0 12px 24px rgba(0,0,0,0.06);z-index:25;}
+    nav.primary.mobile-open > .nav-item{width:100%;padding:12px 0;border-bottom:1px solid var(--line);justify-content:space-between;}
+    .nav-right .icon-btn{display:none;}
+    .nav-right .btn{padding:8px 12px;font-size:12px;}
+    .nav-toggle{display:flex;}
+
+    .megamenu{position:static;box-shadow:none;border-bottom:none;}
+    .megamenu-inner{grid-template-columns:1fr;gap:20px;padding:16px 20px;}
+
+    .hero{min-height:560px;}
+    .hero-card{max-width:100%;}
+    .hero-card h1{font-size:30px;}
+    .hero-card p{font-size:14px;max-width:100%;}
+    .hero-tag, .hero-tag-box{display:none;}
+    .hero-pills-bottom{bottom:24px;flex-wrap:wrap;padding:0 20px;}
+    .hero-actions{flex-wrap:wrap;}
+
+    section{padding:36px 0;}
+    .two-col, .two-col.reverse{grid-template-columns:1fr;gap:24px;}
+    .two-col.reverse > div:first-child{order:0;}
+    h2.section-title{font-size:24px;}
+    .closing h2{font-size:26px;white-space:normal;}
+    .closing{padding:64px 0;}
+
+    .step-row{gap:6px;}
+    .cards3{grid-template-columns:1fr;}
+    .stats3{grid-template-columns:1fr;gap:16px;margin-top:28px;}
+    .stat .num{font-size:48px;}
+    .stats-dark{padding:56px 0;}
+
+    .calc-grid{grid-template-columns:1fr;gap:20px;}
+    .results3{grid-template-columns:1fr;}
+
+    .video-banner{height:420px;}
+    .video-banner-content h2{font-size:24px;}
+    .video-banner-content p{font-size:14px;}
+
+    .partners-row, .trusted-row{gap:10px;}
+    .partner-logo{padding:12px 18px;font-size:14px;}
+    .trusted-chip{padding:10px 16px;font-size:12px;}
+
+    .foot-grid{grid-template-columns:1fr 1fr;gap:24px;}
+    .foot-bottom{flex-direction:column;gap:8px;align-items:flex-start;}
+  }
+
+  @media (max-width: 520px){
+    .foot-grid{grid-template-columns:1fr;}
+    .hero-card h1{font-size:26px;}
+    .stat .num{font-size:38px;}
+  }
 </style>
 </head>
 <body>
@@ -171,6 +229,7 @@
     <div class="nav-right">
       <div class="icon-btn">&#128269;</div>
       <a class="btn btn-primary" href="#" data-goto="demo">Book a demo</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </div>
 
@@ -491,6 +550,13 @@
   var mm = document.getElementById('megamenu');
   var mmInner = document.getElementById('megamenu-inner');
   var navItems = document.querySelectorAll('.nav-item');
+  var navToggle = document.getElementById('nav-toggle');
+  var navPrimary = document.querySelector('nav.primary');
+  navToggle.addEventListener('click', function(){
+    navPrimary.classList.toggle('mobile-open');
+    mm.classList.remove('open');
+    navItems.forEach(function(i){i.classList.remove('open');});
+  });
 
   function renderMenu(key){
     var cols = menus[key];
