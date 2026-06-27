@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overstory — prototype</title>
+<style>
+  :root{
+    --ink:#1a1a18;
+    --muted:#6b6b66;
+    --faint:#9a9a94;
+    --line:#d8d6cf;
+    --line-strong:#b9b7ae;
+    --paper:#fafaf7;
+    --panel:#f0efe9;
+    --accent:#1f4d3a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--paper);}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1280px;margin:0 auto;padding:0 32px;}
+
+  header{border-bottom:1px solid var(--line);position:relative;background:var(--paper);}
+  .nav-row{display:flex;align-items:center;justify-content:space-between;padding:18px 0;}
+  .logo{font-size:18px;font-weight:700;letter-spacing:0.02em;}
+  nav.primary{display:flex;align-items:center;gap:30px;}
+  nav.primary > .nav-item{position:relative;font-size:14px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:4px;padding:6px 0;}
+  nav.primary > .nav-item:hover, nav.primary > .nav-item.open{color:var(--ink);}
+  .caret{font-size:10px;}
+  .nav-right{display:flex;align-items:center;gap:18px;}
+  .icon-btn{width:30px;height:30px;border:1px solid var(--line-strong);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;}
+  .btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border-radius:6px;padding:10px 18px;cursor:pointer;border:1px solid transparent;}
+  .btn-primary{background:var(--ink);color:var(--paper);}
+  .btn-secondary{border:1px solid var(--line-strong);color:var(--ink);background:transparent;}
+
+  .megamenu{display:none;position:absolute;left:0;right:0;top:100%;background:var(--paper);border-bottom:1px solid var(--line);box-shadow:0 12px 24px rgba(0,0,0,0.06);z-index:20;}
+  .megamenu.open{display:block;}
+  .megamenu-inner{max-width:1280px;margin:0 auto;padding:36px 32px;display:grid;grid-template-columns:repeat(5,1fr);gap:32px;}
+  .mm-col h4{font-size:13px;font-weight:700;margin:0 0 14px;}
+  .mm-col .rule{width:36px;height:2px;background:var(--accent);margin-bottom:14px;}
+  .mm-col a{display:block;font-size:13px;color:var(--muted);margin-bottom:10px;}
+  .mm-col a.featured{color:var(--accent);font-weight:600;}
+  .mm-col a:hover{color:var(--ink);}
+
+  .label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;}
+
+  .hero{position:relative;min-height:780px;background:#000;overflow:hidden;}
+  .hero-heatmap{position:absolute;inset:0;z-index:0;
+    background-image:url('images/hero-satellite.jpg');
+    background-size:cover;background-position:60% 50%;
+    filter:grayscale(1) contrast(1.4) brightness(0.85) invert(0.06);
+  }
+  .hero-heatmap::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.75) 32%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.1) 100%);}
+  .hero-overlay{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:flex-start;}
+  .hero-overlay .wrap{width:100%;}
+  .hero-card{color:#f4f3ef;max-width:640px;}
+  .hero-kicker{font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(244,243,239,0.6);margin-bottom:22px;font-weight:600;padding-left:14px;border-left:2px solid #f4f3ef;}
+  .hero-card h1{font-size:46px;margin:0 0 24px;font-weight:500;letter-spacing:-0.01em;line-height:1.18;}
+  .hero-card h1 .dim{color:rgba(244,243,239,0.4);}
+  .hero-card p{font-size:16px;color:rgba(244,243,239,0.65);margin:0 0 32px;max-width:480px;line-height:1.65;}
+  .hero-actions{display:flex;gap:10px;}
+  .hero .btn-primary{background:#f4f3ef;color:#0a0a0a;}
+  .hero .btn-secondary{border-color:rgba(244,243,239,0.35);color:#f4f3ef;}
+  .hero-tag{position:absolute;z-index:2;background:rgba(244,243,239,0.12);backdrop-filter:blur(2px);color:rgba(244,243,239,0.85);border:1px solid rgba(244,243,239,0.25);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;}
+  .hero-tag.top-left{top:96px;right:230px;}
+  .hero-tag.top-right{top:170px;right:160px;border-radius:6px 6px 0 0;}
+  .hero-tag-box{position:absolute;z-index:2;top:202px;right:160px;width:170px;height:80px;border:1px solid rgba(244,243,239,0.3);}
+  .hero-pills-bottom{position:absolute;z-index:2;bottom:60px;left:0;right:0;display:flex;gap:10px;justify-content:center;}
+  .hero-pill{background:rgba(244,243,239,0.1);border:1px solid rgba(244,243,239,0.2);color:rgba(244,243,239,0.7);border-radius:14px;padding:6px 14px;font-size:12px;}
+
+  section{padding:56px 0;border-bottom:1px solid var(--line);}
+  section.no-border{border-bottom:none;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;}
+  .two-col.reverse > div:first-child{order:2;}
+  .ph{background:var(--panel);border:1px solid var(--line-strong);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--faint);font-size:13px;height:280px;}
+  .ph.small{height:160px;}
+  .ph.tall{height:340px;}
+  h2.section-title{font-size:32px;margin:0 0 16px;font-weight:400;letter-spacing:-0.01em;line-height:1.15;}
+  p.copy{font-size:14px;color:var(--muted);line-height:1.7;margin:0 0 16px;max-width:480px;}
+  .link-arrow{font-size:13px;font-weight:600;color:var(--accent);}
+
+  .step-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .step-pill{border:1px solid var(--line-strong);border-radius:14px;padding:6px 14px;font-size:12px;color:var(--muted);}
+  .step-pill.active{border-color:var(--ink);color:var(--ink);font-weight:600;}
+  .step-card{border:1px solid var(--line-strong);border-radius:8px;padding:16px 18px;background:var(--paper);}
+  .step-card h4{margin:0 0 6px;font-size:14px;}
+  .step-card p{margin:0;font-size:12px;color:var(--muted);}
+
+  .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .card{border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--paper);}
+  .card .ph{height:120px;border-radius:0;border-left:none;border-right:none;border-top:none;}
+  .card-body{padding:16px;}
+  .card-body p{font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.6;}
+  .card-body span{font-size:12px;font-weight:600;color:var(--accent);}
+  .logo-strip{display:flex;justify-content:center;gap:36px;margin-top:32px;opacity:0.55;font-size:12px;color:var(--muted);flex-wrap:wrap;}
+
+  .stats-dark{background:#15170f;border-bottom:1px solid #1c211e;}
+  .stats-dark .section-title{color:#f4f3ef;}
+  .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .stat{border:1px solid rgba(244,243,239,0.18);border-radius:8px;padding:24px;text-align:center;}
+  .stat .num{font-size:43px;font-weight:400;color:#f4f3ef;}
+  .stat .desc{font-size:13px;color:rgba(244,243,239,0.6);margin-top:8px;}
+
+  .calc-card{border:1px solid var(--line-strong);border-radius:10px;padding:32px;background:var(--panel);}
+  .calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .field .val{font-weight:700;color:var(--ink);}
+  input[type=range]{width:100%;}
+  select{width:100%;font-size:13px;padding:8px;border:1px solid var(--line-strong);border-radius:6px;background:var(--paper);}
+  .results3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px;}
+  .result{background:var(--paper);border-radius:8px;padding:16px;text-align:center;}
+  .result .rlabel{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:0.04em;}
+  .result .rval{font-size:22px;font-weight:700;margin-top:6px;}
+
+  .closing{background:var(--panel);text-align:center;padding:64px 0;}
+  .closing h2{font-size:26px;margin:0 0 20px;}
+
+  footer{padding:48px 0 24px;}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:24px;margin-bottom:32px;}
+  .foot-col h5{font-size:12px;font-weight:700;margin:0 0 12px;}
+  .foot-col a{display:block;font-size:13px;color:var(--muted);margin-bottom:8px;}
+  .foot-col input{width:100%;padding:8px;font-size:13px;border:1px solid var(--line-strong);border-radius:6px;margin-bottom:8px;}
+  .foot-bottom{border-top:1px solid var(--line);padding-top:18px;display:flex;justify-content:space-between;font-size:12px;color:var(--faint);}
+
+  .page{display:none;}
+  .page.active{display:block;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav-row">
+    <a href="#" class="logo" data-goto="home">OVERSTORY</a>
+    <nav class="primary">
+      <div class="nav-item" data-menu="platform">Platform <span class="caret">&#9662;</span></div>
+      <div class="nav-item" data-menu="solutions">Solutions <span class="caret">&#9662;</span></div>
+      <div class="nav-item" data-menu="why">Why Overstory <span class="caret">&#9662;</span></div>
+      <div class="nav-item" data-menu="resources">Resources <span class="caret">&#9662;</span></div>
+      <div class="nav-item" data-menu="company">Company <span class="caret">&#9662;</span></div>
+    </nav>
+    <div class="nav-right">
+      <div class="icon-btn">&#128269;</div>
+      <a class="btn btn-primary" href="#" data-goto="demo">Book a demo</a>
+    </div>
+  </div>
+
+  <div class="megamenu" id="megamenu">
+    <div class="megamenu-inner" id="megamenu-inner"></div>
+  </div>
+</header>
+
+<main>
+
+  <div id="page-home" class="page active">
+
+    <section class="hero" style="padding:0;">
+      <div class="hero-heatmap"></div>
+
+      <div class="hero-tag top-left">Tree canopy — 84% conf</div>
+      <div class="hero-tag top-right">Vegetation risk — HIGH</div>
+      <div class="hero-tag-box"></div>
+
+      <div class="hero-overlay">
+        <div class="wrap">
+          <div class="hero-card">
+            <div class="hero-kicker">AI-powered geospatial intelligence</div>
+            <h1>See every tree.<br>Predict every risk.<br><span class="dim">Act before it happens.</span></h1>
+            <p>Overstory combines satellite imagery, AI analysis and live risk scoring to give utility, infrastructure and land management teams a single source of geospatial truth.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#" data-goto="solutions-veg">&#9656; See the platform live</a>
+              <a class="btn btn-secondary" href="#" data-goto="home">&#9638; Calculate my ROI</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-pills-bottom">
+        <div class="hero-pill">&#128752; Satellite</div>
+        <div class="hero-pill">&#9679; Canopy AI</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2 class="section-title">Follow a risk</h2>
+        <div class="step-row">
+          <div class="step-pill active">01 Capture</div>
+          <div class="step-pill">02 Detection</div>
+          <div class="step-pill">03 Risk score</div>
+          <div class="step-pill">04 Dispatch</div>
+        </div>
+        <div class="two-col">
+          <div class="ph">map — pinned, annotated</div>
+          <div class="step-card">
+            <h4>This tree had 11 days left before it touched the line.</h4>
+            <p>Satellite capture flagged a lean and crown encroachment near mile marker 142. AI scoring moved it to the top of this week's work order.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="two-col">
+          <div>
+            <div class="label">Platform — risk prioritization</div>
+            <h2 class="section-title">Know which mile matters most this week</h2>
+            <p class="copy">A ranked, data-driven work list that reflects real outage and wildfire risk — not just inspection cycles.</p>
+            <a class="link-arrow" href="#" data-goto="solutions-veg">See prioritization in your territory &rarr;</a>
+          </div>
+          <div class="ph">product UI — priority work list</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="two-col reverse">
+          <div>
+            <div class="label">Solutions — wildfire risk</div>
+            <h2 class="section-title">See wildfire risk before it becomes an outage</h2>
+            <p class="copy">Region and season-aware risk modeling, layered on real vegetation and terrain data.</p>
+            <a class="link-arrow" href="#" data-goto="solutions-fire">See wildfire risk by region &rarr;</a>
+          </div>
+          <div class="ph">product UI — wildfire heat map</div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2 class="section-title">Field reports</h2>
+        <div class="cards3">
+          <div class="card">
+            <div class="ph">photo</div>
+            <div class="card-body">
+              <p>"A genuinely collaborative partnership in building our vegetation program."</p>
+              <span>PG&amp;E — read case study</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ph">photo</div>
+            <div class="card-body">
+              <p>"Identified tree-fall risk we hadn't been able to see before."</p>
+              <span>Holy Cross Energy — read case study</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ph">photo</div>
+            <div class="card-body">
+              <p>"Accuracy exceeded expectations across 10,000 miles of powerline."</p>
+              <span>Elewit / Red El&eacute;ctrica — read case study</span>
+            </div>
+          </div>
+        </div>
+        <div class="logo-strip">
+          <span>PG&amp;E</span><span>AEP</span><span>OG&amp;E</span><span>ComEd</span><span>PGE</span><span>BC Hydro</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-dark">
+      <div class="wrap">
+        <h2 class="section-title">The problem, in numbers</h2>
+        <div class="stats3">
+          <div class="stat"><div class="num">75%</div><div class="desc">of overhead maintenance budgets now go to vegetation management, up from 50% in 2015.</div></div>
+          <div class="stat"><div class="num">54%</div><div class="desc">of vegetation management workers voluntarily left their roles in the last five years.</div></div>
+          <div class="stat"><div class="num">78%</div><div class="desc">increase in weather-related outages over the last 10 years.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="no-border">
+      <div class="wrap">
+        <h2 class="section-title">ROI / impact calculator</h2>
+        <div class="calc-card">
+          <div class="calc-grid">
+            <div>
+              <div class="field">
+                <label>Line miles managed: <span class="val" id="miles-out">4,000</span></label>
+                <input type="range" id="miles" min="500" max="10000" step="500" value="4000">
+              </div>
+              <div class="field">
+                <label>Current VM spend ($m): <span class="val" id="spend-out">25</span></label>
+                <input type="range" id="spend" min="1" max="100" step="1" value="25">
+              </div>
+              <div class="field">
+                <label>Crew count: <span class="val" id="crews-out">40</span></label>
+                <input type="range" id="crews" min="5" max="200" step="5" value="40">
+              </div>
+              <div class="field">
+                <label>Wildfire zone</label>
+                <select id="zone">
+                  <option value="0.6">Low</option>
+                  <option value="1" selected>Medium</option>
+                  <option value="1.4">High</option>
+                </select>
+              </div>
+            </div>
+            <div class="ph small">live map + results panel</div>
+          </div>
+          <div class="results3">
+            <div class="result"><div class="rlabel">SAIDI minutes avoided</div><div class="rval" id="out-saidi">0</div></div>
+            <div class="result"><div class="rlabel">Risk reduction</div><div class="rval" id="out-risk">0%</div></div>
+            <div class="result"><div class="rlabel">Crew-hours reallocated</div><div class="rval" id="out-hours">0</div></div>
+          </div>
+          <div style="margin-top:24px;">
+            <a class="btn btn-primary" href="#" data-goto="demo">Get this modeled for your territory &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing no-border">
+      <div class="wrap">
+        <h2>See the risk. Model the tradeoffs. Make the decision.</h2>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#" data-goto="demo">Book a demo</a>
+          <a class="btn btn-secondary" href="#" data-goto="demo">Talk to a specialist</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="page-solutions-veg" class="page">
+    <section class="no-border">
+      <div class="wrap">
+        <div class="label">Solutions — vegetation intelligence</div>
+        <h2 class="section-title">Vegetation intelligence</h2>
+        <div class="ph tall">map / product UI placeholder</div>
+        <p class="copy" style="margin-top:24px;">AI combined with satellite and aerial imagery generates vegetation data; local context (asset location, wildfire maps, terrain) sharpens it into a prioritized, fundable work plan.</p>
+        <a class="btn btn-secondary" href="#" data-goto="home">&larr; Back to home</a>
+        <a class="btn btn-primary" href="#" data-goto="demo">Book a demo</a>
+      </div>
+    </section>
+  </div>
+
+  <div id="page-solutions-fire" class="page">
+    <section class="no-border">
+      <div class="wrap">
+        <div class="label">Solutions — wildfire intelligence</div>
+        <h2 class="section-title">Wildfire intelligence</h2>
+        <div class="ph tall">map / product UI placeholder</div>
+        <p class="copy" style="margin-top:24px;">Region and season-aware wildfire risk modeling layered on vegetation, terrain, and asset data — so crews go where the risk actually is.</p>
+        <a class="btn btn-secondary" href="#" data-goto="home">&larr; Back to home</a>
+        <a class="btn btn-primary" href="#" data-goto="demo">Book a demo</a>
+      </div>
+    </section>
+  </div>
+
+  <div id="page-demo" class="page">
+    <section class="no-border">
+      <div class="wrap" style="max-width:560px;">
+        <div class="label">Book a demo</div>
+        <h2 class="section-title">Talk to a vegetation specialist</h2>
+        <p class="copy">Pre-filled with your ROI calculator inputs where available.</p>
+        <div class="field"><label>Name</label><input type="text" style="width:100%;padding:8px;border:1px solid var(--line-strong);border-radius:6px;"></div>
+        <div class="field"><label>Work email</label><input type="text" style="width:100%;padding:8px;border:1px solid var(--line-strong);border-radius:6px;"></div>
+        <div class="field"><label>Utility / company</label><input type="text" style="width:100%;padding:8px;border:1px solid var(--line-strong);border-radius:6px;"></div>
+        <a class="btn btn-primary" href="#" style="margin-top:8px;">Submit</a>
+        <a class="btn btn-secondary" href="#" data-goto="home" style="margin-top:8px;">&larr; Back to home</a>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="logo" style="margin-bottom:10px;">OVERSTORY</div>
+        <p style="font-size:13px;color:var(--muted);">AI-powered vegetation intelligence for a more resilient grid.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <a href="#">How it works</a>
+        <a href="#">The data &amp; science</a>
+        <a href="#">Accuracy &amp; validation</a>
+        <a href="#">Security · SOC 2</a>
+      </div>
+      <div class="foot-col">
+        <h5>Solutions</h5>
+        <a href="#" data-goto="solutions-veg">Vegetation intelligence</a>
+        <a href="#" data-goto="solutions-fire">Wildfire intelligence</a>
+        <a href="#">By outcome</a>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <a href="#">Case studies</a>
+        <a href="#">White papers</a>
+        <a href="#">Blog</a>
+      </div>
+      <div class="foot-col">
+        <h5>Stay updated</h5>
+        <input type="text" placeholder="name@company.com">
+        <a class="btn btn-secondary" href="#" style="font-size:12px;padding:8px 14px;">Subscribe</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; Overstory — SOC 2 certified</span>
+      <span>Privacy &middot; Terms</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var menus = {
+    platform: [
+      {h:"Platform", links:[["How it works","#"],["The data & science","#"],["Accuracy & validation","#",true],["Security · SOC 2","#"],["Integrations & API","#"]]},
+      {h:"Solutions", links:[["Vegetation intelligence","#page-solutions-veg",true],["Wildfire intelligence","#page-solutions-fire",true],["By role — VP / Manager / Procurement","#"],["By outcome — Wildfire · SAIDI · Cost","#"]]},
+      {h:"Why Overstory", links:[["Outcomes & ROI","#",true],["Customer stories","#"],["Our approach","#"],["Compare to status quo","#"]]},
+      {h:"Resources", links:[["Playbooks","#"],["White papers","#"],["Case studies","#"],["Webinars","#"],["Blog","#"]]},
+      {h:"Company", links:[["About us","#"],["Careers","#"],["News","#"],["Partners","#"],["Contact sales","#"]]}
+    ]
+  };
+  menus.solutions = menus.platform;
+  menus.why = menus.platform;
+  menus.resources = menus.platform;
+  menus.company = menus.platform;
+
+  var mm = document.getElementById('megamenu');
+  var mmInner = document.getElementById('megamenu-inner');
+  var navItems = document.querySelectorAll('.nav-item');
+
+  function renderMenu(key){
+    var cols = menus[key];
+    mmInner.innerHTML = cols.map(function(col){
+      var links = col.links.map(function(l){
+        var cls = l[2] ? 'class="featured"' : '';
+        var goto = l[1].indexOf('#page-') === 0 ? ' data-goto="'+l[1].replace('#page-','')+'"' : '';
+        return '<a href="'+l[1]+'" '+cls+goto+'>'+l[0]+'</a>';
+      }).join('');
+      return '<div class="mm-col"><h4>'+col.h+'</h4><div class="rule"></div>'+links+'</div>';
+    }).join('');
+    bindGoto(mmInner);
+  }
+
+  navItems.forEach(function(item){
+    item.addEventListener('click', function(){
+      var key = item.getAttribute('data-menu');
+      var alreadyOpen = item.classList.contains('open');
+      navItems.forEach(function(i){i.classList.remove('open');});
+      if(alreadyOpen){ mm.classList.remove('open'); return; }
+      renderMenu(key);
+      item.classList.add('open');
+      mm.classList.add('open');
+    });
+  });
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('header')){
+      mm.classList.remove('open');
+      navItems.forEach(function(i){i.classList.remove('open');});
+    }
+  });
+
+  var pages = document.querySelectorAll('.page');
+  function go(name){
+    pages.forEach(function(p){p.classList.toggle('active', p.id === 'page-'+name);});
+    mm.classList.remove('open');
+    navItems.forEach(function(i){i.classList.remove('open');});
+    window.scrollTo(0,0);
+  }
+  function bindGoto(root){
+    root.querySelectorAll('[data-goto]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.preventDefault();
+        go(el.getAttribute('data-goto'));
+      });
+    });
+  }
+  bindGoto(document);
+
+  var miles=document.getElementById('miles'), spend=document.getElementById('spend'), crews=document.getElementById('crews'), zone=document.getElementById('zone');
+  function fmt(n){return Math.round(n).toLocaleString();}
+  function calc(){
+    document.getElementById('miles-out').textContent = fmt(miles.value);
+    document.getElementById('spend-out').textContent = spend.value;
+    document.getElementById('crews-out').textContent = crews.value;
+    var z = parseFloat(zone.value);
+    var saidi = (parseFloat(miles.value) * 0.18 * z) / 10;
+    var risk = Math.min(65, (parseFloat(crews.value) * 0.4 * z) + (parseFloat(spend.value) * 0.15));
+    var hours = parseFloat(crews.value) * 52 * z;
+    document.getElementById('out-saidi').textContent = fmt(saidi);
+    document.getElementById('out-risk').textContent = Math.round(risk) + '%';
+    document.getElementById('out-hours').textContent = fmt(hours);
+  }
+  [miles,spend,crews,zone].forEach(function(el){ el.addEventListener('input', calc); });
+  calc();
+
+  var pills = document.querySelectorAll('.pill');
+  pills.forEach(function(p){
+    p.addEventListener('click', function(){
+      pills.forEach(function(x){x.classList.remove('active');});
+      p.classList.add('active');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
