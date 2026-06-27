@@ -89,16 +89,17 @@
   .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
   .card{border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--paper);}
   .card .ph{height:120px;border-radius:0;border-left:none;border-right:none;border-top:none;}
+  .card-photo{width:100%;aspect-ratio:16/9;display:block;object-fit:cover;filter:grayscale(1) contrast(1.05);border-bottom:1px solid var(--line-strong);}
   .card-body{padding:16px;}
   .card-body p{font-size:13px;color:var(--muted);margin:0 0 10px;line-height:1.6;}
   .card-body span{font-size:12px;font-weight:600;color:var(--accent);}
   .logo-strip{display:flex;justify-content:center;gap:36px;margin-top:32px;opacity:0.55;font-size:12px;color:var(--muted);flex-wrap:wrap;}
 
-  .stats-dark{background:#15170f;border-bottom:1px solid #1c211e;}
+  .stats-dark{background:#15170f;border-bottom:1px solid #1c211e;padding:96px 0;}
   .stats-dark .section-title{color:#f4f3ef;}
-  .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-  .stat{border:1px solid rgba(244,243,239,0.18);border-radius:8px;padding:24px;text-align:center;}
-  .stat .num{font-size:43px;font-weight:400;color:#f4f3ef;}
+  .stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+  .stat{border-radius:8px;padding:24px;text-align:center;}
+  .stat .num{font-size:78px;font-weight:400;color:#f4f3ef;}
   .stat .desc{font-size:13px;color:rgba(244,243,239,0.6);margin-top:8px;}
 
   .calc-card{border:1px solid var(--line-strong);border-radius:10px;padding:32px;background:var(--panel);}
@@ -116,8 +117,33 @@
   .result .rlabel{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:0.04em;}
   .result .rval{font-size:22px;font-weight:700;margin-top:6px;}
 
-  .closing{background:var(--panel);text-align:center;padding:64px 0;}
-  .closing h2{font-size:26px;margin:0 0 20px;}
+  .video-banner{position:relative;height:640px;overflow:hidden;border-bottom:1px solid var(--line);background:#0a0b09;}
+  .video-play-btn{position:relative;z-index:2;width:76px;height:76px;border-radius:50%;background:rgba(244,243,239,0.95);display:flex;align-items:center;justify-content:center;margin-bottom:28px;cursor:pointer;border:none;transition:transform 0.15s ease;}
+  .video-play-btn:hover{transform:scale(1.06);}
+  .video-play-btn .tri{width:0;height:0;border-style:solid;border-width:11px 0 11px 18px;border-color:transparent transparent transparent #0a0b09;margin-left:4px;}
+  .video-banner video, .video-banner .video-fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1) brightness(0.7);}
+  .video-banner::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,11,9,0.35) 0%, rgba(10,11,9,0.75) 100%);}
+  .video-banner-content{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#f4f3ef;padding:0 32px;}
+  .video-banner-kicker{font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(244,243,239,0.6);margin-bottom:16px;font-weight:600;}
+  .video-banner-content h2{font-size:36px;font-weight:400;margin:0 0 16px;max-width:760px;letter-spacing:-0.01em;line-height:1.2;}
+  .video-banner-content p{font-size:16px;color:rgba(244,243,239,0.7);max-width:560px;margin:0;line-height:1.6;}
+
+  .partners-banner{background:var(--panel);padding:64px 0;}
+  .partners-banner .label{text-align:center;margin-bottom:28px;font-size:13px;}
+  .partners-row{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;}
+  .partner-logo{font-size:16px;font-weight:600;color:var(--ink);letter-spacing:0.01em;display:flex;align-items:center;gap:10px;background:var(--paper);border:1px solid var(--line-strong);border-radius:8px;padding:18px 28px;}
+  .partner-logo .ico{font-size:18px;color:var(--muted);}
+
+  .closing{background:#0c0f0d;text-align:center;padding:120px 0;}
+  .closing h2{color:#f4f3ef;font-size:42px;font-weight:500;white-space:nowrap;margin:0 auto 32px;line-height:1.25;}
+  .closing .hero-actions{justify-content:center;}
+  .closing .btn-primary{background:#f4f3ef;color:#0a0a0a;padding:14px 28px;font-size:14px;}
+  .closing .btn-secondary{border-color:rgba(244,243,239,0.35);color:#f4f3ef;padding:14px 28px;font-size:14px;}
+
+  .trusted-banner{background:var(--panel);padding:48px 0;border-bottom:1px solid var(--line);}
+  .trusted-banner .label{text-align:center;margin-bottom:24px;}
+  .trusted-row{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
+  .trusted-chip{background:#e4e2da;color:var(--muted);font-size:13px;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;border-radius:6px;padding:14px 24px;}
 
   footer{padding:48px 0 24px;}
   .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:24px;margin-bottom:32px;}
@@ -184,6 +210,20 @@
       </div>
     </section>
 
+    <section class="trusted-banner">
+      <div class="wrap">
+        <div class="label">Trusted by leading utilities &amp; infrastructure organisations</div>
+        <div class="trusted-row">
+          <div class="trusted-chip">PG&amp;E</div>
+          <div class="trusted-chip">AEP</div>
+          <div class="trusted-chip">OG&amp;E</div>
+          <div class="trusted-chip">ComEd</div>
+          <div class="trusted-chip">Portland General Electric</div>
+          <div class="trusted-chip">BC Hydro</div>
+        </div>
+      </div>
+    </section>
+
     <section>
       <div class="wrap">
         <h2 class="section-title">Follow a risk</h2>
@@ -231,26 +271,38 @@
       </div>
     </section>
 
+    <section class="video-banner">
+      <img class="video-fallback" src="images/hero-satellite.jpg" alt="">
+      <video autoplay muted loop playsinline poster="images/hero-satellite.jpg">
+      </video>
+      <div class="video-banner-content">
+        <button class="video-play-btn" aria-label="Play mission video"><span class="tri"></span></button>
+        <div class="video-banner-kicker">Our mission</div>
+        <h2>A more resilient grid starts with seeing the risk clearly.</h2>
+        <p>Overstory exists to give every utility a clear, data-driven view of vegetation and wildfire risk — so crews can act before nature does, not after.</p>
+      </div>
+    </section>
+
     <section>
       <div class="wrap">
         <h2 class="section-title">Field reports</h2>
         <div class="cards3">
           <div class="card">
-            <div class="ph">photo</div>
+            <img class="card-photo" src="images/field-report-2.jpg" alt="Power transmission lines at sunset">
             <div class="card-body">
               <p>"A genuinely collaborative partnership in building our vegetation program."</p>
               <span>PG&amp;E — read case study</span>
             </div>
           </div>
           <div class="card">
-            <div class="ph">photo</div>
+            <img class="card-photo" src="images/field-report-1.jpg" alt="Holy Cross Energy field site">
             <div class="card-body">
               <p>"Identified tree-fall risk we hadn't been able to see before."</p>
               <span>Holy Cross Energy — read case study</span>
             </div>
           </div>
           <div class="card">
-            <div class="ph">photo</div>
+            <img class="card-photo" src="images/field-report-3.jpg" alt="Powerline and vegetation scene">
             <div class="card-body">
               <p>"Accuracy exceeded expectations across 10,000 miles of powerline."</p>
               <span>Elewit / Red El&eacute;ctrica — read case study</span>
@@ -311,6 +363,17 @@
           <div style="margin-top:24px;">
             <a class="btn btn-primary" href="#" data-goto="demo">Get this modeled for your territory &rarr;</a>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="partners-banner">
+      <div class="wrap">
+        <div class="label">Technology &amp; data partners</div>
+        <div class="partners-row">
+          <div class="partner-logo"><span class="ico">&#128752;</span> Maxar Imagery</div>
+          <div class="partner-logo"><span class="ico">&#9888;</span> Watch Duty</div>
+          <div class="partner-logo"><span class="ico">&#9992;</span> Airbus</div>
         </div>
       </div>
     </section>
